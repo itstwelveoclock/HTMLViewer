@@ -838,8 +838,6 @@ function renderGrid() {
 
 // ── Player ────────────────────────────────────────────────────────────────────
 let currentPlayingId = null;
-let _closingViaHistory = false;
-
 function openPlayer(id) {
   const p = prototypes.find(x => x.id === id);
   if (!p) return;
@@ -859,16 +857,11 @@ function closePlayer() {
   document.getElementById('player-actions-dropdown').classList.remove('open');
   currentPlayingId = null;
   document.body.style.overflow = '';
-  if (!_closingViaHistory && history.state && history.state.proto_player) {
-    history.back();
-  }
 }
 
 window.addEventListener('popstate', () => {
   if (document.getElementById('player').classList.contains('open')) {
-    _closingViaHistory = true;
     closePlayer();
-    _closingViaHistory = false;
   }
 });
 
