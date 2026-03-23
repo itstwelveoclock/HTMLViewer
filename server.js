@@ -186,5 +186,4 @@ app.get('/api/folders', requireAuth, (req, res) => {
 // ── Start ────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`Prototype Hub running on http://localhost:${PORT}`);
-  console.log(`Password: ${PASSWORD}`);
 });
