@@ -15,7 +15,7 @@ const DATA_FILE = path.join(PERSISTENT_DIR, 'data', 'prototypes.json');
 const UPLOADS_DIR = path.join(PERSISTENT_DIR, 'uploads');
 
 // ── Ensure directories exist ─────────────────────────────────────────────────
-[UPLOADS_DIR, path.join(__dirname, 'data')].forEach(dir => {
+[UPLOADS_DIR, path.join(PERSISTENT_DIR, 'data')].forEach(dir => {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 if (!fs.existsSync(DATA_FILE)) fs.writeFileSync(DATA_FILE, JSON.stringify([]));
