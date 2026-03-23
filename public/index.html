@@ -838,6 +838,7 @@ function renderGrid() {
 
 // ── Player ────────────────────────────────────────────────────────────────────
 let currentPlayingId = null;
+let _closingViaHistory = false;
 
 function openPlayer(id) {
   const p = prototypes.find(x => x.id === id);
@@ -849,14 +850,27 @@ function openPlayer(id) {
   document.getElementById('player-iframe').src = `/uploads/${p.filename}`;
   document.getElementById('player').classList.add('open');
   document.body.style.overflow = 'hidden';
+  history.pushState({ proto_player: true }, '');
 }
 
 function closePlayer() {
   document.getElementById('player').classList.remove('open');
   document.getElementById('player-iframe').src = '';
+  document.getElementById('player-actions-dropdown').classList.remove('open');
   currentPlayingId = null;
   document.body.style.overflow = '';
+  if (!_closingViaHistory && history.state && history.state.proto_player) {
+    history.back();
+  }
 }
+
+window.addEventListener('popstate', () => {
+  if (document.getElementById('player').classList.contains('open')) {
+    _closingViaHistory = true;
+    closePlayer();
+    _closingViaHistory = false;
+  }
+});
 
 // ── Upload Modal ──────────────────────────────────────────────────────────────
 function openUploadModal() {
