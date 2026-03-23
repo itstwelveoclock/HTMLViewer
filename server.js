@@ -10,8 +10,9 @@ const PORT = process.env.PORT || 3000;
 // ── Config ──────────────────────────────────────────────────────────────────
 const PASSWORD = process.env.SITE_PASSWORD || 'changeme123';
 const SESSION_SECRET = process.env.SESSION_SECRET || 'prototype-hub-secret-key-change-in-prod';
-const DATA_FILE = path.join(__dirname, 'data', 'prototypes.json');
-const UPLOADS_DIR = path.join(__dirname, 'uploads');
+const PERSISTENT_DIR = process.env.PERSISTENT_DIR || path.join(__dirname);
+const DATA_FILE = path.join(PERSISTENT_DIR, 'data', 'prototypes.json');
+const UPLOADS_DIR = path.join(PERSISTENT_DIR, 'uploads');
 
 // ── Ensure directories exist ─────────────────────────────────────────────────
 [UPLOADS_DIR, path.join(__dirname, 'data')].forEach(dir => {
