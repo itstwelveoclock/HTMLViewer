@@ -749,7 +749,7 @@ function renderGrid() {
 
   grid.innerHTML = filtered.map(p => `
     <div class="card" id="card-${p.id}">
-      <div class="card-preview" onclick="openPlayer(${JSON.stringify(p.id)})">
+      <div class="card-preview" onclick="openPlayer('${p.id}')">
         <iframe src="/uploads/${p.filename}" sandbox="allow-scripts" loading="lazy"></iframe>
         <div class="card-preview-overlay">
           <div class="preview-play">▶</div>
@@ -766,9 +766,9 @@ function renderGrid() {
           <span class="card-date">${formatDate(p.updatedAt)}</span>
         </div>
         <div class="card-actions">
-          <button class="btn btn-ghost" onclick="event.stopPropagation();openPlayer(${JSON.stringify(p.id)})">Open</button>
-          <button class="btn btn-ghost" onclick="event.stopPropagation();openEditModal(${JSON.stringify(p.id)})">Edit</button>
-          <button class="btn btn-ghost" onclick="event.stopPropagation();openUpdateModalFor(${JSON.stringify(p.id)})">Update file</button>
+          <button class="btn btn-ghost" onclick="event.stopPropagation();openPlayer('${p.id}')">Open</button>
+          <button class="btn btn-ghost" onclick="event.stopPropagation();openEditModal('${p.id}')">Edit</button>
+          <button class="btn btn-ghost" onclick="event.stopPropagation();openUpdateModalFor('${p.id}')">Update file</button>
         </div>
       </div>
     </div>
