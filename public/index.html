@@ -454,6 +454,59 @@ body {
   background-position: right 12px center;
 }
 
+/* ── Mobile ───────────────────────────────── */
+#sidebar-toggle { display: none; }
+#sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  top: 52px;
+  background: rgba(0,0,0,0.5);
+  z-index: 49;
+}
+#sidebar-overlay.show { display: block; }
+#player-menu-btn { display: none; }
+#player-actions-dropdown { display: flex; gap: 10px; }
+
+@media (max-width: 680px) {
+  #sidebar-toggle { display: inline-flex; }
+
+  .layout { grid-template-columns: 1fr; }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 52px;
+    bottom: 0;
+    width: var(--sidebar);
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform var(--transition);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 8px 0 24px rgba(0,0,0,0.5);
+  }
+
+  #player-menu-btn { display: inline-flex; }
+  #player-actions-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px;
+    gap: 4px;
+    min-width: 140px;
+    z-index: 10;
+  }
+  #player-actions-dropdown.open { display: flex; }
+  .player-bar { position: relative; }
+}
+
 /* ── Player Modal ─────────────────────────── */
 .player-modal {
   display: none;
@@ -528,7 +581,10 @@ body {
 
     <!-- Topbar -->
     <header class="topbar">
-      <div class="topbar-logo">proto</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button id="sidebar-toggle" class="btn btn-ghost" style="padding:7px 10px" onclick="toggleSidebar()">☰</button>
+        <div class="topbar-logo">proto</div>
+      </div>
       <div class="topbar-actions">
         <button class="btn btn-ghost" onclick="openUploadModal()">+ Upload prototype</button>
         <button class="btn btn-ghost" onclick="logout()">Sign out</button>
@@ -559,6 +615,8 @@ body {
     </main>
   </div>
 </div>
+
+<div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <!-- ── Upload Modal ────────────────────────────────────────────────────────── -->
 <div class="modal-backdrop" id="upload-modal">
@@ -617,9 +675,12 @@ body {
       <div class="player-meta" id="player-meta"></div>
     </div>
     <div class="player-bar-actions">
-      <button class="btn btn-ghost" onclick="openEditModal()">Edit info</button>
-      <button class="btn btn-ghost" id="update-file-btn" onclick="openUpdateModal()">Update file</button>
-      <button class="btn btn-danger" onclick="deleteCurrentPrototype()">Delete</button>
+      <button class="btn btn-ghost" id="player-menu-btn" onclick="togglePlayerMenu()">···</button>
+      <div id="player-actions-dropdown">
+        <button class="btn btn-ghost" onclick="openEditModal()">Edit info</button>
+        <button class="btn btn-ghost" id="update-file-btn" onclick="openUpdateModal()">Update file</button>
+        <button class="btn btn-danger" onclick="deleteCurrentPrototype()">Delete</button>
+      </div>
       <button class="btn btn-ghost" onclick="closePlayer()">✕ Close</button>
     </div>
   </div>
@@ -961,6 +1022,24 @@ function formatDate(iso) {
   const d = new Date(iso);
   return d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
 }
+
+// ── Mobile UI ─────────────────────────────────────────────────────────────────
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('show');
+}
+
+function togglePlayerMenu() {
+  document.getElementById('player-actions-dropdown').classList.toggle('open');
+}
+
+// Close player menu when clicking outside
+document.addEventListener('click', e => {
+  const dropdown = document.getElementById('player-actions-dropdown');
+  if (dropdown.classList.contains('open') && !e.target.closest('#player-menu-btn') && !e.target.closest('#player-actions-dropdown')) {
+    dropdown.classList.remove('open');
+  }
+});
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 checkAuth();
