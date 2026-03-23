@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e0f;
+  --surface: #161618;
+  --surface2: #1f1f22;
+  --border: #2a2a2e;
+  --border-light: #3a3a3f;
+  --text: #e8e8ea;
+  --text-dim: #888890;
+  --text-dimmer: #55555c;
+  --accent: #c8f55a;
+  --accent-dim: #a8d040;
+  --accent-bg: rgba(200,245,90,0.08);
+  --red: #ff5c5c;
+  --red-bg: rgba(255,92,92,0.08);
+  --radius: 8px;
+  --radius-lg: 14px;
+  --font-mono: 'DM Mono', monospace;
+  --font: 'DM Sans', sans-serif;
+  --sidebar: 220px;
+  --transition: 180ms ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Login ─────────────────────────────── */
+#login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  background-image: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(200,245,90,0.06) 0%, transparent 70%);
+}
+
+.login-box {
+  width: 360px;
+  padding: 48px 40px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.login-logo {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.login-logo span { color: var(--text-dimmer); }
+
+.login-box h1 {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+.login-box p {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 28px;
+}
+
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.field input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color var(--transition);
+}
+.field input:focus { border-color: var(--accent); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition);
+}
+.btn-primary {
+  background: var(--accent);
+  color: #0e0e0f;
+  width: 100%;
+  justify-content: center;
+}
+.btn-primary:hover { background: var(--accent-dim); }
+.btn-ghost {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--border-light); color: var(--text); }
+.btn-danger {
+  background: var(--red-bg);
+  color: var(--red);
+  border: 1px solid transparent;
+}
+.btn-danger:hover { border-color: var(--red); }
+
+.error-msg {
+  font-size: 13px;
+  color: var(--red);
+  margin-top: 10px;
+  display: none;
+}
+.error-msg.show { display: block; }
+
+/* ── App Layout ────────────────────────── */
+#app { display: none; height: 100vh; overflow: hidden; }
+
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidebar) 1fr;
+  grid-template-rows: 52px 1fr;
+  height: 100vh;
+}
+
+/* ── Topbar ────────────────────────────── */
+.topbar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.topbar-logo {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.topbar-logo span { color: var(--text-dimmer); }
+
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+.topbar-actions .btn-ghost {
+  font-size: 13px;
+  padding: 7px 14px;
+}
+
+/* ── Sidebar ────────────────────────────── */
+.sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  padding: 16px 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dimmer);
+  padding: 6px 8px 4px;
+  margin-top: 8px;
+}
+
+.folder-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: var(--text-dim);
+  transition: all var(--transition);
+  border: 1px solid transparent;
+}
+.folder-item:hover { background: var(--surface2); color: var(--text); }
+.folder-item.active { background: var(--accent-bg); color: var(--accent); border-color: rgba(200,245,90,0.15); }
+.folder-icon { font-size: 14px; opacity: 0.7; }
+.folder-count {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dimmer);
+}
+
+/* ── Main Content ────────────────────────── */
+.main {
+  overflow-y: auto;
+  padding: 28px 32px;
+  background: var(--bg);
+}
+
+.main-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.main-title {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.main-count {
+  font-size: 13px;
+  color: var(--text-dimmer);
+  font-family: var(--font-mono);
+  margin-left: 8px;
+}
+
+/* ── Grid ────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color var(--transition), transform var(--transition);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+.card:hover { border-color: var(--border-light); transform: translateY(-1px); }
+
+.card-preview {
+  height: 160px;
+  background: var(--surface2);
+  position: relative;
+  overflow: hidden;
+}
+.card-preview iframe {
+  width: 200%;
+  height: 200%;
+  transform: scale(0.5);
+  transform-origin: top left;
+  border: none;
+  pointer-events: none;
+}
+.card-preview-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(14,14,15,0.3);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.card:hover .card-preview-overlay { opacity: 1; }
+.preview-play {
+  width: 44px; height: 44px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #0e0e0f;
+  font-size: 18px;
+  transform: scale(0.85);
+  transition: transform var(--transition);
+}
+.card:hover .preview-play { transform: scale(1); }
+
+.card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.card-title { font-size: 14px; font-weight: 500; letter-spacing: -0.01em; }
+.card-desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; flex: 1; }
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.card-author {
+  font-size: 12px;
+  color: var(--text-dimmer);
+  font-family: var(--font-mono);
+}
+.card-date { font-size: 11px; color: var(--text-dimmer); }
+
+.card-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.card:hover .card-actions { opacity: 1; }
+.card-actions .btn { font-size: 12px; padding: 5px 10px; }
+
+.version-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-dimmer);
+  padding: 2px 7px;
+  border-radius: 99px;
+}
+
+/* ── Empty State ─────────────────────────── */
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-dimmer);
+}
+.empty-icon { font-size: 40px; margin-bottom: 14px; }
+.empty p { font-size: 14px; line-height: 1.6; }
+
+/* ── Modal ────────────────────────────────── */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.modal-backdrop.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 500px;
+  max-width: 95vw;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 32px;
+}
+
+.modal h2 { font-size: 18px; font-weight: 500; margin-bottom: 6px; letter-spacing: -0.02em; }
+.modal .modal-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; }
+
+.modal .field { margin-bottom: 14px; }
+
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.modal-footer .btn { min-width: 90px; justify-content: center; }
+
+/* File drop zone */
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.drop-zone input[type=file] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+.drop-icon { font-size: 28px; margin-bottom: 8px; }
+.drop-label { font-size: 13px; color: var(--text-dim); }
+.drop-label strong { color: var(--accent); }
+.drop-chosen { font-size: 12px; color: var(--accent); font-family: var(--font-mono); margin-top: 6px; display: none; }
+.drop-chosen.show { display: block; }
+
+/* Textarea */
+.field textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  resize: vertical;
+  min-height: 72px;
+  transition: border-color var(--transition);
+}
+.field textarea:focus { border-color: var(--accent); }
+
+/* Select */
+.field select {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+/* ── Player Modal ─────────────────────────── */
+.player-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 200;
+  flex-direction: column;
+}
+.player-modal.open { display: flex; }
+
+.player-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.player-title { font-size: 14px; font-weight: 500; }
+.player-meta { font-size: 12px; color: var(--text-dimmer); font-family: var(--font-mono); margin-top: 2px; }
+
+.player-bar-actions { display: flex; gap: 10px; }
+
+.player-frame {
+  flex: 1;
+  overflow: hidden;
+}
+.player-frame iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Loading spinner */
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: none;
+}
+.spinner.show { display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- ── Login ──────────────────────────────────────────────────────────────── -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">proto<span>/</span>hub</div>
+    <h1>Welcome back</h1>
+    <p>Enter the team password to access prototypes.</p>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary" onclick="login()">
+      <span id="login-spinner" class="spinner"></span>
+      Sign in
+    </button>
+    <div class="error-msg" id="login-error">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<!-- ── App ────────────────────────────────────────────────────────────────── -->
+<div id="app">
+  <div class="layout">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-logo">proto<span>/</span>hub</div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" onclick="openUploadModal()">+ Upload prototype</button>
+        <button class="btn btn-ghost" onclick="logout()">Sign out</button>
+      </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-label">Browse</div>
+      <div class="folder-item active" data-folder="all" onclick="selectFolder('all', this)">
+        <span class="folder-icon">◈</span>
+        All prototypes
+        <span class="folder-count" id="count-all">0</span>
+      </div>
+      <div class="sidebar-label" style="margin-top:12px">Folders</div>
+      <div id="folder-list"></div>
+    </nav>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="main-header">
+        <div>
+          <span class="main-title" id="view-title">All prototypes</span>
+          <span class="main-count" id="view-count"></span>
+        </div>
+      </div>
+      <div class="grid" id="grid"></div>
+    </main>
+  </div>
+</div>
+
+<!-- ── Upload Modal ────────────────────────────────────────────────────────── -->
+<div class="modal-backdrop" id="upload-modal">
+  <div class="modal">
+    <h2 id="modal-title">Upload prototype</h2>
+    <p class="modal-sub" id="modal-sub">Share a new HTML prototype with the team.</p>
+
+    <div class="field" id="file-field">
+      <label>HTML file</label>
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" accept=".html,text/html" onchange="fileChosen(this)">
+        <div class="drop-icon">⬆</div>
+        <div class="drop-label"><strong>Choose file</strong> or drag here</div>
+        <div class="drop-chosen" id="file-chosen"></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Title *</label>
+      <input type="text" id="f-title" placeholder="e.g. Zone selector v3">
+    </div>
+
+    <div class="field">
+      <label>Description</label>
+      <textarea id="f-desc" placeholder="What does this prototype do?"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Author</label>
+      <input type="text" id="f-author" placeholder="Your name">
+    </div>
+
+    <div class="field">
+      <label>Folder</label>
+      <input type="text" id="f-folder" placeholder="e.g. Phone UI, UE5 concepts, Music…">
+      <div style="margin-top:6px">
+        <select id="f-folder-select" onchange="document.getElementById('f-folder').value = this.value; this.value = ''">
+          <option value="">— or pick existing folder —</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <span class="spinner" id="upload-spinner"></span>
+      <button class="btn btn-ghost" onclick="closeUploadModal()">Cancel</button>
+      <button class="btn btn-primary" id="upload-btn" onclick="submitUpload()">Upload</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Player ─────────────────────────────────────────────────────────────── -->
+<div class="player-modal" id="player">
+  <div class="player-bar">
+    <div>
+      <div class="player-title" id="player-title"></div>
+      <div class="player-meta" id="player-meta"></div>
+    </div>
+    <div class="player-bar-actions">
+      <button class="btn btn-ghost" onclick="openEditModal()">Edit info</button>
+      <button class="btn btn-ghost" id="update-file-btn" onclick="openUpdateModal()">Update file</button>
+      <button class="btn btn-danger" onclick="deleteCurrentPrototype()">Delete</button>
+      <button class="btn btn-ghost" onclick="closePlayer()">✕ Close</button>
+    </div>
+  </div>
+  <div class="player-frame">
+    <iframe id="player-iframe" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" allowfullscreen></iframe>
+  </div>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+let prototypes = [];
+let currentFolder = 'all';
+let editingId = null;
+let isUpdateMode = false;
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
+async function checkAuth() {
+  const r = await fetch('/api/auth-status');
+  const d = await r.json();
+  if (d.authenticated) showApp();
+}
+
+async function login() {
+  const pw = document.getElementById('login-password').value;
+  if (!pw) return;
+  const spinner = document.getElementById('login-spinner');
+  spinner.classList.add('show');
+  try {
+    const r = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw })
+    });
+    if (r.ok) showApp();
+    else {
+      document.getElementById('login-error').classList.add('show');
+    }
+  } finally {
+    spinner.classList.remove('show');
+  }
+}
+
+document.getElementById('login-password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') login();
+});
+
+async function logout() {
+  await fetch('/api/logout', { method: 'POST' });
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-password').value = '';
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadPrototypes();
+}
+
+// ── Data ─────────────────────────────────────────────────────────────────────
+async function loadPrototypes() {
+  const r = await fetch('/api/prototypes');
+  prototypes = await r.json();
+  renderSidebar();
+  renderGrid();
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+function renderSidebar() {
+  const folders = [...new Set(prototypes.map(p => p.folder))].sort();
+  const list = document.getElementById('folder-list');
+  list.innerHTML = '';
+
+  folders.forEach(folder => {
+    const count = prototypes.filter(p => p.folder === folder).length;
+    const div = document.createElement('div');
+    div.className = 'folder-item' + (currentFolder === folder ? ' active' : '');
+    div.dataset.folder = folder;
+    div.onclick = () => selectFolder(folder, div);
+    div.innerHTML = `
+      <span class="folder-icon">▸</span>
+      ${escHtml(folder)}
+      <span class="folder-count">${count}</span>
+    `;
+    list.appendChild(div);
+  });
+
+  document.getElementById('count-all').textContent = prototypes.length;
+
+  // Populate folder select in upload modal
+  const sel = document.getElementById('f-folder-select');
+  const prev = sel.value;
+  while (sel.options.length > 1) sel.remove(1);
+  folders.forEach(f => {
+    const o = document.createElement('option');
+    o.value = f; o.textContent = f;
+    sel.appendChild(o);
+  });
+}
+
+function selectFolder(folder, el) {
+  currentFolder = folder;
+  document.querySelectorAll('.folder-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  renderGrid();
+}
+
+// ── Grid ─────────────────────────────────────────────────────────────────────
+function renderGrid() {
+  const filtered = currentFolder === 'all'
+    ? prototypes
+    : prototypes.filter(p => p.folder === currentFolder);
+
+  document.getElementById('view-title').textContent =
+    currentFolder === 'all' ? 'All prototypes' : currentFolder;
+  document.getElementById('view-count').textContent = `${filtered.length}`;
+
+  const grid = document.getElementById('grid');
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">◻</div>
+        <p>No prototypes here yet.<br>Upload one to get started.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => `
+    <div class="card" id="card-${p.id}">
+      <div class="card-preview" onclick="openPlayer(${JSON.stringify(p.id)})">
+        <iframe src="/uploads/${p.filename}" sandbox="allow-scripts" loading="lazy"></iframe>
+        <div class="card-preview-overlay">
+          <div class="preview-play">▶</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="card-title">${escHtml(p.title)}</div>
+          ${p.version > 1 ? `<span class="version-badge">v${p.version}</span>` : ''}
+        </div>
+        ${p.description ? `<div class="card-desc">${escHtml(p.description)}</div>` : ''}
+        <div class="card-meta">
+          <span class="card-author">${escHtml(p.author)}</span>
+          <span class="card-date">${formatDate(p.updatedAt)}</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-ghost" onclick="event.stopPropagation();openPlayer(${JSON.stringify(p.id)})">Open</button>
+          <button class="btn btn-ghost" onclick="event.stopPropagation();openEditModal(${JSON.stringify(p.id)})">Edit</button>
+          <button class="btn btn-ghost" onclick="event.stopPropagation();openUpdateModalFor(${JSON.stringify(p.id)})">Update file</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Player ────────────────────────────────────────────────────────────────────
+let currentPlayingId = null;
+
+function openPlayer(id) {
+  const p = prototypes.find(x => x.id === id);
+  if (!p) return;
+  currentPlayingId = id;
+  document.getElementById('player-title').textContent = p.title;
+  document.getElementById('player-meta').textContent =
+    `${p.author} · ${p.folder} · v${p.version || 1} · ${formatDate(p.updatedAt)}`;
+  document.getElementById('player-iframe').src = `/uploads/${p.filename}`;
+  document.getElementById('player').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePlayer() {
+  document.getElementById('player').classList.remove('open');
+  document.getElementById('player-iframe').src = '';
+  currentPlayingId = null;
+  document.body.style.overflow = '';
+}
+
+// ── Upload Modal ──────────────────────────────────────────────────────────────
+function openUploadModal() {
+  isUpdateMode = false;
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'Upload prototype';
+  document.getElementById('modal-sub').textContent = 'Share a new HTML prototype with the team.';
+  document.getElementById('file-field').style.display = 'block';
+  document.getElementById('upload-btn').textContent = 'Upload';
+  clearForm();
+  document.getElementById('upload-modal').classList.add('open');
+}
+
+function openUpdateModal() {
+  if (!currentPlayingId) return;
+  openUpdateModalFor(currentPlayingId);
+}
+
+function openUpdateModalFor(id) {
+  isUpdateMode = true;
+  editingId = id;
+  const p = prototypes.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('modal-title').textContent = 'Update prototype';
+  document.getElementById('modal-sub').textContent = `Uploading a new file will replace the current version (v${p.version || 1}).`;
+  document.getElementById('file-field').style.display = 'block';
+  document.getElementById('upload-btn').textContent = 'Update';
+  document.getElementById('f-title').value = p.title;
+  document.getElementById('f-desc').value = p.description;
+  document.getElementById('f-author').value = p.author;
+  document.getElementById('f-folder').value = p.folder;
+  document.getElementById('upload-modal').classList.add('open');
+}
+
+function openEditModal(id) {
+  const targetId = id || currentPlayingId;
+  if (!targetId) return;
+  isUpdateMode = true;
+  editingId = targetId;
+  const p = prototypes.find(x => x.id === targetId);
+  if (!p) return;
+  document.getElementById('modal-title').textContent = 'Edit prototype';
+  document.getElementById('modal-sub').textContent = 'Update metadata only. To replace the file, use "Update file".';
+  document.getElementById('file-field').style.display = 'none';
+  document.getElementById('upload-btn').textContent = 'Save changes';
+  document.getElementById('f-title').value = p.title;
+  document.getElementById('f-desc').value = p.description;
+  document.getElementById('f-author').value = p.author;
+  document.getElementById('f-folder').value = p.folder;
+  document.getElementById('upload-modal').classList.add('open');
+}
+
+function closeUploadModal() {
+  document.getElementById('upload-modal').classList.remove('open');
+  clearForm();
+}
+
+function clearForm() {
+  ['f-title','f-desc','f-author','f-folder'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('file-input').value = '';
+  document.getElementById('file-chosen').textContent = '';
+  document.getElementById('file-chosen').classList.remove('show');
+}
+
+function fileChosen(input) {
+  const el = document.getElementById('file-chosen');
+  if (input.files[0]) {
+    el.textContent = input.files[0].name;
+    el.classList.add('show');
+  } else {
+    el.classList.remove('show');
+  }
+}
+
+// Drag over styling
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) {
+    document.getElementById('file-input').files = e.dataTransfer.files;
+    fileChosen(document.getElementById('file-input'));
+  }
+});
+
+async function submitUpload() {
+  const title = document.getElementById('f-title').value.trim();
+  if (!title) { alert('Title is required'); return; }
+
+  const spinner = document.getElementById('upload-spinner');
+  const btn = document.getElementById('upload-btn');
+  spinner.classList.add('show');
+  btn.disabled = true;
+
+  try {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', document.getElementById('f-desc').value.trim());
+    formData.append('author', document.getElementById('f-author').value.trim());
+    formData.append('folder', document.getElementById('f-folder').value.trim() || 'Uncategorized');
+
+    const fileInput = document.getElementById('file-input');
+    if (fileInput.files[0]) formData.append('file', fileInput.files[0]);
+
+    let url = '/api/prototypes';
+    let method = 'POST';
+    if (isUpdateMode && editingId) {
+      url = `/api/prototypes/${editingId}`;
+      method = 'PUT';
+    }
+
+    const r = await fetch(url, { method, body: formData });
+    if (!r.ok) {
+      const err = await r.json();
+      throw new Error(err.error || 'Upload failed');
+    }
+
+    closeUploadModal();
+    await loadPrototypes();
+
+    // Refresh player if open
+    if (currentPlayingId && isUpdateMode && editingId === currentPlayingId) {
+      const p = prototypes.find(x => x.id === currentPlayingId);
+      if (p) openPlayer(p.id);
+    }
+  } catch (e) {
+    alert(e.message);
+  } finally {
+    spinner.classList.remove('show');
+    btn.disabled = false;
+  }
+}
+
+// ── Delete ────────────────────────────────────────────────────────────────────
+async function deleteCurrentPrototype() {
+  if (!currentPlayingId) return;
+  const p = prototypes.find(x => x.id === currentPlayingId);
+  if (!p) return;
+  if (!confirm(`Delete "${p.title}"? This cannot be undone.`)) return;
+
+  await fetch(`/api/prototypes/${currentPlayingId}`, { method: 'DELETE' });
+  closePlayer();
+  await loadPrototypes();
+}
+
+// ── Keyboard shortcuts ────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('player').classList.contains('open')) closePlayer();
+    if (document.getElementById('upload-modal').classList.contains('open')) closeUploadModal();
+  }
+});
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function formatDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+checkAuth();
+</script>
+</body>
+</html>
