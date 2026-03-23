@@ -1,5 +1,5 @@
 {
-  "name": "prototype-hub",
+  "name": "proto",
   "version": "1.0.0",
   "description": "Private prototype hosting platform",
   "main": "server.js",
