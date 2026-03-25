@@ -523,7 +523,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 14px 20px;
-  border-bottom: 1px solid var(--border);
+  border-top: 1px solid var(--border);
   background: var(--surface);
   flex-shrink: 0;
   transition: transform 0.2s ease, opacity 0.2s ease;
@@ -549,7 +549,7 @@ body {
 
 .player-bar-toggle {
   position: absolute;
-  top: 8px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -694,6 +694,10 @@ body {
 
 <!-- ── Player ─────────────────────────────────────────────────────────────── -->
 <div class="player-modal" id="player">
+  <div class="player-frame">
+    <button class="player-bar-toggle" id="player-bar-toggle" onclick="togglePlayerBar()">···</button>
+    <iframe id="player-iframe" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" allowfullscreen></iframe>
+  </div>
   <div class="player-bar" id="player-bar">
     <div>
       <div class="player-title" id="player-title"></div>
@@ -707,10 +711,6 @@ body {
         <button class="btn btn-danger" onclick="deleteCurrentPrototype()">Delete</button>
       </div>
     </div>
-  </div>
-  <div class="player-frame">
-    <button class="player-bar-toggle" id="player-bar-toggle" onclick="togglePlayerBar()">···</button>
-    <iframe id="player-iframe" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" allowfullscreen></iframe>
   </div>
 </div>
 
