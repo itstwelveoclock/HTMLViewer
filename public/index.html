@@ -295,16 +295,20 @@ body {
 }
 .card:hover .card-preview-overlay { opacity: 1; }
 .preview-play {
-  width: 44px; height: 44px;
-  background: var(--accent);
+  width: 48px; height: 48px;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1.5px solid rgba(255,255,255,0.18);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  color: #0e0e0f;
-  font-size: 18px;
   transform: scale(0.85);
-  transition: transform var(--transition);
+  transition: transform var(--transition), background var(--transition), border-color var(--transition);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
-.card:hover .preview-play { transform: scale(1); }
+.preview-play svg { fill: #fff; width: 18px; height: 18px; margin-left: 2px; transition: fill var(--transition); }
+.card:hover .preview-play { transform: scale(1); background: var(--accent); border-color: var(--accent); }
+.card:hover .preview-play svg { fill: #0e0e0f; }
 
 .card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
 .card-title { font-size: 14px; font-weight: 500; letter-spacing: -0.01em; }
@@ -838,7 +842,7 @@ function renderGrid() {
       <div class="card-preview" onclick="openPlayer('${p.id}')">
         <iframe src="/uploads/${p.filename}" sandbox="allow-scripts" loading="lazy"></iframe>
         <div class="card-preview-overlay">
-          <div class="preview-play">▶</div>
+          <div class="preview-play"><svg viewBox="0 0 24 24"><polygon points="8,5 20,12 8,19"/></svg></div>
         </div>
       </div>
       <div class="card-body">
